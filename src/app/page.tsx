@@ -96,7 +96,7 @@ export default function App() {
     if (!session) return;
 
     const newMessage: MessageData = {
-      id: Date.now().toString(),
+      id: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
       content,
       sender: session.nickname,
       timestamp: new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }),
@@ -118,7 +118,7 @@ export default function App() {
         setMessages((prev) => [
           ...prev,
           {
-            id: (Date.now() + 1).toString(),
+            id: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
             content: responses[Math.floor(Math.random() * responses.length)],
             sender: randomMember.nickname,
             timestamp: new Date().toLocaleTimeString("en-US", {

@@ -16,7 +16,7 @@ A modern, real-time chat application frontend built with Next.js, React, and Soc
 
 Before you begin, ensure you have the following installed:
 - Node.js (v18 or higher)
-- npm or yarn package manager
+- pnpm package manager
 - A Socket.IO server running (see Backend Setup below)
 
 ## Installation
@@ -29,7 +29,7 @@ cd Chat
 
 2. Install dependencies:
 ```bash
-npm install
+pnpm install
 ```
 
 3. Configure environment variables:
@@ -47,7 +47,7 @@ NEXT_PUBLIC_SOCKET_URL=http://localhost:3001
 Run the development server:
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
@@ -57,13 +57,13 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to see the a
 To create a production build:
 
 ```bash
-npm run build
+pnpm run build
 ```
 
 To start the production server:
 
 ```bash
-npm start
+pnpm start
 ```
 
 ## Lint
@@ -71,7 +71,7 @@ npm start
 To run the linter:
 
 ```bash
-npm run lint
+pnpm run lint
 ```
 
 ## Backend Setup

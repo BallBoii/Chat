@@ -172,24 +172,26 @@ export default function App() {
       </div>
 
       {/* Mobile: Fullscreen */}
-      <div className="md:hidden flex flex-col size-full relative z-10 rounded-2xl overflow-hidden shadow-2xl border border-border/50 backdrop-blur-sm bg-card/95">
-        <TopBar token={session.token} timeLeft={timeLeft} />
+      <div className="md:hidden flex flex-col fixed inset-0 z-10">
+        <div className="size-full p-5 sm:p-6 pb-24 flex items-center justify-center">
+          <div className="flex flex-col size-full rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border border-border/50 backdrop-blur-sm bg-card/95">
+            <TopBar token={session.token} timeLeft={timeLeft} />
 
-        <div className="flex-1 flex overflow-hidden">
-          {/* Main Chat Area */}
-          <div className={`flex-1 flex flex-col ${mobileTab === "chat" ? "flex" : "hidden"}`}>
-            <MessageList messages={messages} />
-            <MessageComposer onSend={handleSendMessage} />
-          </div>
+            <div className="flex-1 flex overflow-hidden pb-5">
+              {/* Main Chat Area */}
+              <div className={`flex-1 flex flex-col ${mobileTab === "chat" ? "flex" : "hidden"}`}>
+                <MessageList messages={messages} />
+                <MessageComposer onSend={handleSendMessage} />
+              </div>
 
           {/* Mobile Members Panel */}
           {mobileTab === "members" && (
-            <div className="flex-1 flex flex-col bg-card">
+            <div className="flex-1 flex flex-col bg-card overflow-hidden">
               <div className="h-16 px-4 flex items-center gap-2 border-b border-border">
                 <Users className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground">Members ({members.length})</span>
               </div>
-              <div className="flex-1 overflow-auto p-3 space-y-1 pb-20">
+              <div className="flex-1 overflow-auto p-3 space-y-1">
                 {members.map((member) => (
                   <div
                     key={member.id}
@@ -219,12 +221,12 @@ export default function App() {
 
           {/* Mobile Settings Panel */}
           {mobileTab === "settings" && (
-            <div className="flex-1 flex flex-col bg-card">
+            <div className="flex-1 flex flex-col bg-card overflow-hidden">
               <div className="h-16 px-4 flex items-center gap-2 border-b border-border">
                 <SettingsIcon className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground">Settings</span>
               </div>
-              <div className="flex-1 overflow-auto p-4 space-y-6 pb-20">
+              <div className="flex-1 overflow-auto p-4 space-y-6">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between py-3">
                     <div className="space-y-0.5">
@@ -262,11 +264,13 @@ export default function App() {
               </div>
             </div>
           )}
+            </div>
+          </div>
         </div>
-
-        {/* Mobile Bottom Navigation */}
-        <MobileNav activeTab={mobileTab} onTabChange={setMobileTab} />
       </div>
+
+      {/* Mobile Bottom Navigation - Outside container so it's positioned correctly */}
+      <MobileNav activeTab={mobileTab} onTabChange={setMobileTab} />
 
       <Toaster />
     </div>

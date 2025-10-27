@@ -158,7 +158,7 @@ export default function App() {
       {/* Desktop & Tablet: Floating Window */}
       <div className="hidden md:flex w-full h-full items-center justify-center relative z-10">
         <ChatWindow>
-          <TopBar token={session.token} timeLeft={timeLeft} />
+          <TopBar token={session.token} timeLeft={timeLeft} darkMode={darkMode} setDarkMode={setDarkMode} />
           
           <div className="flex-1 flex overflow-hidden">
             <MembersPanel members={members} currentUserId={session.userId} />
@@ -175,7 +175,7 @@ export default function App() {
       <div className="md:hidden flex flex-col fixed inset-0 z-10">
         <div className="size-full p-5 sm:p-6 pb-24 flex items-center justify-center">
           <div className="flex flex-col size-full rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border border-border/50 backdrop-blur-sm bg-card/95">
-            <TopBar token={session.token} timeLeft={timeLeft} />
+            <TopBar token={session.token} timeLeft={timeLeft} darkMode={darkMode} setDarkMode={setDarkMode} />
 
             <div className="flex-1 flex overflow-hidden pb-5">
               {/* Main Chat Area */}

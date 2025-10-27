@@ -15,6 +15,8 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { useSocket } from "@/context/SocketContext";
+import type { Sticker } from "@/types/sticker";
 
 interface Session {
   token: string;
@@ -29,6 +31,9 @@ interface MessageData {
   timestamp: string;
   isMine: boolean;
   isSystem?: boolean;
+  type: 'text' | 'sticker';
+  stickerUrl?: string;
+  stickerId?: string;
 }
 
 interface Member {
@@ -44,6 +49,8 @@ export default function App() {
   const [timeLeft, setTimeLeft] = useState("59:45");
   const [mobileTab, setMobileTab] = useState<"chat" | "members" | "settings">("chat");
   const [darkMode, setDarkMode] = useState(false);
+
+  const { sendMessage, sendSticker } = useSocket();
 
   useEffect(() => {
     if (darkMode) {
@@ -81,6 +88,7 @@ export default function App() {
         timestamp: new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }),
         isMine: false,
         isSystem: true,
+        type: 'text'
       },
     ]);
 
@@ -102,6 +110,7 @@ export default function App() {
       sender: session.nickname,
       timestamp: new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }),
       isMine: true,
+      type: 'text',
     };
 
     setMessages((prev) => [...prev, newMessage]);
@@ -127,6 +136,53 @@ export default function App() {
               minute: "2-digit",
             }),
             isMine: false,
+            type: 'text',
+          },
+        ]);
+      }
+    }, 1000 + Math.random() * 2000);
+  };
+
+  const handleSendSticker = (sticker: Sticker) => {
+    if (!session) return;
+
+    const newMessage: MessageData = {
+      id: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+      content: sticker.name, // Use sticker name as content
+      sender: session.nickname,
+      timestamp: new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }),
+      isMine: true,
+      type: 'sticker',
+      stickerUrl: sticker.url,
+      stickerId: sticker.id,
+    };
+
+    setMessages((prev) => [...prev, newMessage]);
+
+    // Simulate a sticker response from other members
+    setTimeout(() => {
+      const stickerResponses = [
+        { name: "Happy Ghost", url: "/stickers/ghost/ghost1.png", id: "ghost-1" },
+        { name: "Surprised Ghost", url: "/stickers/ghost/ghost3.png", id: "ghost-3" },
+      ];
+      const randomSticker = stickerResponses[Math.floor(Math.random() * stickerResponses.length)];
+      const randomMember = members.find((m) => m.id !== session.userId);
+      
+      if (randomMember) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+            content: randomSticker.name,
+            sender: randomMember.nickname,
+            timestamp: new Date().toLocaleTimeString("en-US", {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+            isMine: false,
+            type: 'sticker',
+            stickerUrl: randomSticker.url,
+            stickerId: randomSticker.id,
           },
         ]);
       }
@@ -173,7 +229,10 @@ export default function App() {
             
             <div className="flex-1 flex flex-col">
               <MessageList messages={messages} />
-              <MessageComposer onSend={handleSendMessage} />
+              <MessageComposer 
+                onSend={handleSendMessage} 
+                onStickerSend={handleSendSticker}
+              />
             </div>
           </div>
         </ChatWindow>
@@ -189,7 +248,10 @@ export default function App() {
               {/* Main Chat Area */}
               <div className={`flex-1 flex flex-col ${mobileTab === "chat" ? "flex" : "hidden"}`}>
                 <MessageList messages={messages} />
-                <MessageComposer onSend={handleSendMessage} />
+                <MessageComposer 
+                  onSend={handleSendMessage} 
+                  onStickerSend={handleSendSticker}  
+                />
               </div>
 
           {/* Mobile Members Panel */}

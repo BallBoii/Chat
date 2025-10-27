@@ -68,6 +68,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       const message: Omit<Message, 'id' | 'timestamp'> = {
         username,
         text: text.trim(),
+        type: 'text',
       };
       socket.emit('send-message', message);
     }
@@ -82,7 +83,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         stickerUrl: sticker.url,
         stickerId: sticker.id,
       };
-      socket.emit('send-message', message);
+      socket.emit('send-sticker', message);
     }
   };
 

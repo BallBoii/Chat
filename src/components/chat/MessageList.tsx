@@ -9,6 +9,9 @@ interface MessageData {
   timestamp: string;
   isMine: boolean;
   isSystem?: boolean;
+  type: 'text' | 'sticker';
+  stickerUrl?: string;
+  stickerId?: string;
 }
 
 interface MessageListProps {

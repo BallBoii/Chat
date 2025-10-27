@@ -3,12 +3,14 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { Message } from '@/types/chat';
+import { Sticker } from '@/types/sticker';
 
 interface SocketContextType {
   socket: Socket | null;
   connected: boolean;
   messages: Message[];
   sendMessage: (text: string) => void;
+  sendSticker: (sticker: Sticker) => void;
   username: string;
   setUsername: (name: string) => void;
 }
@@ -71,6 +73,19 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   };
 
+  const sendSticker = (sticker: Sticker) => {
+    if (socket && username.trim()) {
+      const message: Omit<Message, 'id' | 'timestamp'> = {
+        username,
+        text: '',
+        type: 'sticker',
+        stickerUrl: sticker.url,
+        stickerId: sticker.id,
+      };
+      socket.emit('send-message', message);
+    }
+  };
+
   return (
     <SocketContext.Provider
       value={{
@@ -78,6 +93,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         connected,
         messages,
         sendMessage,
+        sendSticker,
         username,
         setUsername,
       }}

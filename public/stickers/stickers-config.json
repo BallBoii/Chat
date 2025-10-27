@@ -1,0 +1,47 @@
+{
+  "packs": [
+    {
+      "id": "ghost",
+      "name": "Ghost Pack",
+      "description": "Spooky ghost stickers",
+      "thumbnail": "/stickers/ghost/ghost1.png",
+      "stickers": [
+        {
+          "id": "ghost-1",
+          "name": "Hi Ghost",
+          "url": "/stickers/ghost/ghost1.png",
+          "thumbnail": "/stickers/ghost/ghost1.png",
+          "keywords": ["ghost", "hi", "spooky", "hello"]
+        },
+        {
+          "id": "ghost-2",
+          "name": "Party Ghost",
+          "url": "/stickers/ghost/ghost2.png",
+          "thumbnail": "/stickers/ghost/ghost2.png",
+          "keywords": ["ghost", "party", "spooky", "fun"]
+        },
+        {
+          "id": "ghost-3",
+          "name": "Text Ghost",
+          "url": "/stickers/ghost/ghost3.png",
+          "thumbnail": "/stickers/ghost/ghost3.png",
+          "keywords": ["ghost", "type", "text", "spooky"]
+        },
+        {
+          "id": "ghost-4",
+          "name": "Confused Ghost",
+          "url": "/stickers/ghost/ghost4.png",
+          "thumbnail": "/stickers/ghost/ghost4.png",
+          "keywords": ["ghost", "confused", "spooky", "question"]
+        },
+        {
+          "id": "ghost-5",
+          "name": "Love Ghost",
+          "url": "/stickers/ghost/ghost5.png",
+          "thumbnail": "/stickers/ghost/ghost5.png",
+          "keywords": ["ghost", "love", "heart", "spooky"]
+        }
+      ]
+    }
+  ]
+}

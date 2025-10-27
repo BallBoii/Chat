@@ -32,7 +32,7 @@ export function TopBar({ token, timeLeft, darkMode, setDarkMode }: TopBarProps) 
       <div className="flex items-center gap-3">
         <Badge
           variant="secondary"
-          className="h-8 px-3 rounded-full bg-muted hover:bg-muted border-0 cursor-pointer group text-muted-foreground"
+          className="hidden sm:flex h-8 px-3 rounded-full bg-muted hover:bg-muted border-0 cursor-pointer group text-muted-foreground"
           onClick={handleCopyToken}
         >
           <span className="tracking-wider mr-2">{token}</span>
@@ -40,7 +40,7 @@ export function TopBar({ token, timeLeft, darkMode, setDarkMode }: TopBarProps) 
         </Badge>
         <Badge
           variant="outline"
-          className="h-8 w-8 p-0 rounded-full border-border flex items-center justify-center transition-colors cursor-pointer bg-muted group"
+          className="hidden md:flex h-8 w-8 p-0 rounded-full border-border items-center justify-center transition-colors cursor-pointer bg-muted group"
           onClick={handleToggleDarkMode}
         >
           {darkMode ? (

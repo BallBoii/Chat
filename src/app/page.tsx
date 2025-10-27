@@ -10,10 +10,11 @@ import { MobileNav } from "@/components/chat/MobileNav";
 import { ChatWindow } from "@/components/chat/ChatWindow";
 import { CuteBackground } from "@/components/chat/CuteBackground";
 import { Toaster } from "@/components/ui/sonner";
-import { Users, Settings as SettingsIcon, LogOut } from "lucide-react";
+import { Users, Settings as SettingsIcon, LogOut, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 
 interface Session {
   token: string;
@@ -139,6 +140,13 @@ export default function App() {
     setMobileTab("chat");
   };
 
+  const handleCopyToken = () => {
+    if(!session) return;
+
+    navigator.clipboard.writeText(session.token);
+    toast.success("Token copied to clipboard");
+  };
+
   if (!session) {
     return (
       <>
@@ -237,6 +245,7 @@ export default function App() {
                       id="dark-mode"
                       checked={darkMode}
                       onCheckedChange={setDarkMode}
+                      className="bg-muted-foreground/10"
                     />
                   </div>
 
@@ -247,7 +256,10 @@ export default function App() {
                         Logged in as <span className="text-foreground">{session.nickname}</span>
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        Room: <code className="text-foreground">{session.token}</code>
+                        Room: <code className="text-foreground cursor-pointer inline-flex items-center gap-1 group hover:text-muted-foreground transition-colors" onClick={handleCopyToken}>
+                                {session.token}
+                                <Copy className="h-3 w-3" />
+                              </code>
                       </p>
                     </div>
                   </div>

@@ -14,7 +14,7 @@ interface MembersPanelProps {
 
 export function MembersPanel({ members, currentUserId }: MembersPanelProps) {
   return (
-    <div className="w-64 border-r border-border bg-card hidden lg:flex flex-col">
+    <div className="w-64 border-r border-border bg-card hidden md:flex flex-col">
       <div className="h-16 px-4 flex items-center gap-2 border-b border-border shrink-0">
         <Users className="h-4 w-4 text-muted-foreground" />
         <span className="text-sm text-muted-foreground">Members ({members.length})</span>

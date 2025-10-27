@@ -172,9 +172,9 @@ export default function App() {
       </div>
 
       {/* Mobile: Fullscreen */}
-      <div className="md:hidden flex flex-col fixed inset-0 z-10">
-        <div className="size-full p-5 sm:p-6 pb-24 flex items-center justify-center">
-          <div className="flex flex-col size-full rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border border-border/50 backdrop-blur-sm bg-card/95">
+      <div className="md:hidden flex flex-col fixed inset-0 z-10 pb-20">
+        <div className="w-full h-full p-5 sm:p-6 flex items-center justify-center">
+          <div className="flex flex-col w-full h-full rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border border-border/50 backdrop-blur-sm bg-card/95">
             <TopBar token={session.token} timeLeft={timeLeft} darkMode={darkMode} setDarkMode={setDarkMode} />
 
             <div className="flex-1 flex overflow-hidden pb-5">

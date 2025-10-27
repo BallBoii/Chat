@@ -3,6 +3,9 @@ export interface Message {
   username: string;
   text: string;
   timestamp: Date;
+  type?: 'text' | 'sticker';
+  stickerUrl?: string;
+  stickerId?: string;
 }
 
 export interface User {

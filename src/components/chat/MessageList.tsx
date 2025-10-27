@@ -1,21 +1,10 @@
 import { useEffect, useRef } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Message } from "./Message";
-
-interface MessageData {
-  id: string;
-  content: string;
-  sender: string;
-  timestamp: string;
-  isMine: boolean;
-  isSystem?: boolean;
-  type: 'text' | 'sticker';
-  stickerUrl?: string;
-  stickerId?: string;
-}
+import type { UIMessage } from "@/types/chat";
 
 interface MessageListProps {
-  messages: MessageData[];
+  messages: UIMessage[];
 }
 
 export function MessageList({ messages }: MessageListProps) {

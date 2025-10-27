@@ -4,12 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GhostLogo } from "./GhostLogo";
-import { Copy, Check } from "lucide-react";
+import { Copy, Check, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { roomService } from "@/lib/services/roomService";
+import type { Session } from "@/types/chat";
 
 interface CreateJoinModalProps {
   open: boolean;
-  onJoin: (token: string, nickname: string) => void;
+  onJoin: (session: Session) => void;
 }
 
 export function CreateJoinModal({ open, onJoin }: CreateJoinModalProps) {
@@ -18,21 +20,29 @@ export function CreateJoinModal({ open, onJoin }: CreateJoinModalProps) {
   const [token, setToken] = useState("");
   const [createdToken, setCreatedToken] = useState("");
   const [copied, setCopied] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const generateToken = () => {
-    return Math.random().toString(36).substring(2, 10).toUpperCase();
-  };
-
-  const handleCreate = () => {
+  const handleCreate = async () => {
     if (!nickname.trim()) {
       toast.error("Please enter a nickname");
       return;
     }
-    const newToken = generateToken();
-    setCreatedToken(newToken);
+
+    setLoading(true);
+    try {
+      // Create room on backend
+      const room = await roomService.createRoom(24); // 24 hours TTL
+      setCreatedToken(room.token);
+      toast.success("Room created successfully!");
+    } catch (error) {
+      console.error('Failed to create room:', error);
+      toast.error(error instanceof Error ? error.message : "Failed to create room");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleJoin = () => {
+  const handleJoin = async () => {
     if (!nickname.trim()) {
       toast.error("Please enter a nickname");
       return;
@@ -41,11 +51,43 @@ export function CreateJoinModal({ open, onJoin }: CreateJoinModalProps) {
       toast.error("Please enter a room token");
       return;
     }
-    onJoin(token.toUpperCase(), nickname);
+
+    setLoading(true);
+    try {
+      // Validate room first
+      const isValid = await roomService.validateRoom(token);
+      if (!isValid) {
+        toast.error("Invalid or expired room token");
+        return;
+      }
+
+      // Join the room
+      const session = await roomService.joinRoom(token, nickname);
+      toast.success("Joined room successfully!");
+      onJoin(session);
+    } catch (error) {
+      console.error('Failed to join room:', error);
+      toast.error(error instanceof Error ? error.message : "Failed to join room");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleContinueToRoom = () => {
-    onJoin(createdToken, nickname);
+  const handleContinueToRoom = async () => {
+    if (!createdToken) return;
+
+    setLoading(true);
+    try {
+      // Join the room we just created
+      const session = await roomService.joinRoom(createdToken, nickname);
+      toast.success("Entered room successfully!");
+      onJoin(session);
+    } catch (error) {
+      console.error('Failed to enter room:', error);
+      toast.error(error instanceof Error ? error.message : "Failed to enter room");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCopy = () => {
@@ -110,14 +152,16 @@ export function CreateJoinModal({ open, onJoin }: CreateJoinModalProps) {
                   onClick={() => setMode("initial")}
                   variant="outline"
                   className="flex-1 h-11 rounded-xl"
+                  disabled={loading}
                 >
                   Back
                 </Button>
                 <Button
                   onClick={handleCreate}
                   className="flex-1 h-11 rounded-xl bg-primary hover:bg-primary/90"
+                  disabled={loading}
                 >
-                  Create Room
+                  {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Creating...</> : 'Create Room'}
                 </Button>
               </div>
             </div>
@@ -144,8 +188,9 @@ export function CreateJoinModal({ open, onJoin }: CreateJoinModalProps) {
               <Button
                 onClick={handleContinueToRoom}
                 className="w-full h-11 rounded-xl bg-primary hover:bg-primary/90"
+                disabled={loading}
               >
-                Enter Room
+                {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Entering...</> : 'Enter Room'}
               </Button>
             </div>
           )}
@@ -169,9 +214,9 @@ export function CreateJoinModal({ open, onJoin }: CreateJoinModalProps) {
                   id="token"
                   placeholder="ABC123XY"
                   value={token}
-                  onChange={(e) => setToken(e.target.value.toUpperCase())}
+                  onChange={(e) => setToken(e.target.value.toLowerCase())}
                   className="h-11 rounded-xl border-border bg-input-background tracking-wider"
-                  maxLength={8}
+                  maxLength={20}
                 />
               </div>
               <div className="flex gap-2">
@@ -179,14 +224,16 @@ export function CreateJoinModal({ open, onJoin }: CreateJoinModalProps) {
                   onClick={() => setMode("initial")}
                   variant="outline"
                   className="flex-1 h-11 rounded-xl"
+                  disabled={loading}
                 >
                   Back
                 </Button>
                 <Button
                   onClick={handleJoin}
                   className="flex-1 h-11 rounded-xl bg-primary hover:bg-primary/90"
+                  disabled={loading}
                 >
-                  Join Room
+                  {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Joining...</> : 'Join Room'}
                 </Button>
               </div>
             </div>

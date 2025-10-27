@@ -1,37 +1,54 @@
-interface MessageProps {
-  id: string;
-  content: string;
-  sender: string;
-  timestamp: string;
-  isMine: boolean;
-  isSystem?: boolean;
-  type: 'text' | 'sticker';
-  stickerUrl?: string;
-  stickerId?: string;
-}
+import type { UIMessage } from "@/types/chat";
+import { useState, useEffect } from "react";
+import { getStickerUrl } from "@/lib/utils/stickerMap";
 
-export function Message({ content, sender, timestamp, isMine, isSystem, type, stickerUrl, stickerId }: MessageProps) {
+type MessageProps = UIMessage;
+
+export function Message(message: MessageProps) {
+  const { type, nickname, createdAt, isMine, isSystem } = message;
+  const [stickerUrl, setStickerUrl] = useState<string | null>(null);
+
+  // Load sticker URL when it's a sticker message
+  useEffect(() => {
+    if (type === 'STICKER') {
+      getStickerUrl(message.content).then(setStickerUrl);
+    }
+  }, [type, message]);
+  
+  // Format timestamp
+  const timestamp = new Date(createdAt).toLocaleTimeString("en-US", { 
+    hour: "2-digit", 
+    minute: "2-digit" 
+  });
+
+  const sender = nickname || 'Unknown';
+
+  // Render system messages differently
   if (isSystem) {
     return (
-      <div className="flex justify-center my-4">
-        <div className="px-4 py-2 rounded-full bg-muted text-xs text-muted-foreground">
-          {content}
+      <div className="flex justify-center my-3">
+        <div className="bg-muted/50 px-3 py-1.5 rounded-full">
+          <p className="text-xs text-muted-foreground text-center">
+            {message.type === 'TEXT' ? message.content : ''}
+          </p>
         </div>
       </div>
     );
   }
 
   // Message bubble styling based on type
-  const getBubbleClasses = (messageType: string) => {
+  const getBubbleClasses = (messageType: UIMessage['type']) => {
     const baseClasses = "rounded-2xl min-w-0 w-fit";
     const positionClasses = isMine
       ? "bg-primary text-primary-foreground rounded-tr-md ml-2"
       : "bg-muted text-foreground rounded-tl-md mr-2";
 
     switch (messageType) {
-      case 'sticker':
+      case 'STICKER':
+      case 'IMAGE':
         return `${baseClasses} ${positionClasses} p-2`;
-      case 'text':
+      case 'TEXT':
+      case 'FILE':
       default:
         return `${baseClasses} ${positionClasses} px-3 py-2 sm:px-4 sm:py-2.5`;
     }
@@ -39,11 +56,13 @@ export function Message({ content, sender, timestamp, isMine, isSystem, type, st
 
   const renderMessageContent = () => {
     switch (type) {
-      case 'sticker':
+      case 'STICKER': {
+        // Use loaded sticker URL from frontend config
+        const url = stickerUrl || `/stickers/${message.content}.png`;
         return (
           <img
-            src={stickerUrl}
-            alt={content}
+            src={url}
+            alt={message.content}
             className="w-16 h-16 sm:w-20 sm:h-20 object-contain"
             loading="lazy"
             onError={(e) => {
@@ -52,12 +71,57 @@ export function Message({ content, sender, timestamp, isMine, isSystem, type, st
             }}
           />
         );
+      }
 
-      case 'text':
+      case 'IMAGE': {
+        return (
+          <div className="space-y-2">
+            {message.content && (
+              <p className="text-sm">{message.content}</p>
+            )}
+            {message.attachments.map((attachment, idx) => (
+              <img
+                key={idx}
+                src={attachment.url}
+                alt={attachment.fileName || 'Image'}
+                className="max-w-xs rounded-lg object-contain"
+                loading="lazy"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                }}
+              />
+            ))}
+          </div>
+        );
+      }
+
+      case 'FILE': {
+        return (
+          <div className="space-y-2">
+            {message.content && (
+              <p className="text-sm mb-2">{message.content}</p>
+            )}
+            {message.attachments.map((attachment, idx) => (
+              <a
+                key={idx}
+                href={attachment.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-sm hover:underline"
+              >
+                📎 {attachment.fileName || 'Download file'}
+              </a>
+            ))}
+          </div>
+        );
+      }
+
+      case 'TEXT':
       default:
         return (
           <p className="text-sm leading-relaxed whitespace-pre-wrap break-words word-wrap">
-            {content}
+            {message.content}
           </p>
         );
     }

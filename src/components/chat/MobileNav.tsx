@@ -7,7 +7,7 @@ interface MobileNavProps {
 
 export function MobileNav({ activeTab, onTabChange }: MobileNavProps) {
   return (
-    <div className="lg:hidden fixed bottom-0 left-0 right-0 h-16 bg-card border-t border-border flex items-center justify-around px-4 z-50">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-card border-t border-border flex items-center justify-around px-4 z-50">
       <button
         onClick={() => onTabChange("chat")}
         className={`flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition-colors ${

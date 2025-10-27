@@ -1,18 +1,10 @@
 import { useEffect, useRef } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Message } from "./Message";
-
-interface MessageData {
-  id: string;
-  content: string;
-  sender: string;
-  timestamp: string;
-  isMine: boolean;
-  isSystem?: boolean;
-}
+import type { UIMessage } from "@/types/chat";
 
 interface MessageListProps {
-  messages: MessageData[];
+  messages: UIMessage[];
 }
 
 export function MessageList({ messages }: MessageListProps) {
@@ -26,9 +18,9 @@ export function MessageList({ messages }: MessageListProps) {
 
   if (messages.length === 0) {
     return (
-      <div className="flex-1 flex items-center justify-center p-8">
-        <div className="text-center space-y-3">
-          <div className="w-16 h-16 mx-auto rounded-2xl bg-muted flex items-center justify-center">
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-8">
+        <div className="text-center space-y-3 max-w-sm">
+          <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto rounded-2xl bg-muted flex items-center justify-center">
             <svg
               width="32"
               height="32"
@@ -55,12 +47,13 @@ export function MessageList({ messages }: MessageListProps) {
   }
 
   return (
-    <div className="flex-1 min-h-0">
-      <ScrollArea className="h-full" ref={viewportRef}>
-        <div className="p-6 space-y-1">
+    <div className="flex-1 min-h-0 relative">
+      <ScrollArea className="h-full w-full" ref={viewportRef}>
+        <div className="px-2 sm:px-4 py-4 sm:py-6 space-y-0">
           {messages.map((message) => (
             <Message key={message.id} {...message} />
           ))}
+          {/* <div className="h-4 sm:h-6"></div> */}
         </div>
       </ScrollArea>
     </div>
